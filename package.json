@@ -3,14 +3,23 @@
   "version": "1.0.0",
   "description": "Ghostty Yozakura/Sakura theme + visual config installer",
   "bin": {
-    "yozakura": "./bin/install.js"
+    "yozakura": "bin/install.js"
   },
-  "files": ["bin/", "themes/", "visual.conf"],
+  "files": [
+    "bin/",
+    "themes/",
+    "visual.conf"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/imdafne/yozakura.git"
   },
-  "keywords": ["ghostty", "theme", "terminal", "catppuccin"],
+  "keywords": [
+    "ghostty",
+    "theme",
+    "terminal",
+    "catppuccin"
+  ],
   "author": "stellalou",
   "license": "MIT"
 }
