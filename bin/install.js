@@ -144,14 +144,14 @@ async function installStatusline() {
   let selectedFields = STATUSLINE_FIELDS.map((_, i) => i);
 
   if (!allFlag) {
-    const answer = await ask('  全部显示请直接回车，或输入要跳过的编号（如 2,3）：');
+    const answer = await ask('  全部显示请直接回车，或输入要显示的编号（如 1,2）：');
     if (answer) {
-      const skipFields = new Set();
+      const pickFields = new Set();
       for (const s of answer.split(',')) {
         const n = parseInt(s.trim(), 10);
-        if (n >= 2 && n <= STATUSLINE_FIELDS.length) skipFields.add(n - 1);
+        if (n >= 1 && n <= STATUSLINE_FIELDS.length) pickFields.add(n - 1);
       }
-      selectedFields = selectedFields.filter((i) => !skipFields.has(i));
+      selectedFields = selectedFields.filter((i) => pickFields.has(i));
     }
   }
 
@@ -189,6 +189,12 @@ async function installStatusline() {
 
 const MARKER_START = '# --- yozakura (managed) ---';
 const MARKER_END = '# --- end yozakura ---';
+
+const THEME_CONFLICT_KEYS = new Set([
+  'palette', 'background', 'foreground',
+  'cursor-color', 'cursor-text',
+  'selection-background', 'selection-foreground',
+]);
 
 // ── Paths ──
 
@@ -230,20 +236,21 @@ async function main() {
   console.log();
 
   // Determine which groups to install
-  let skipSet = new Set();
+  let pickSet = null;
 
   if (!allFlag) {
-    const answer = await ask('全部安装请直接回车，或输入要跳过的编号（如 2,6）：');
+    const answer = await ask('全部安装请直接回车，或输入要安装的编号（如 1,3）：');
     if (answer) {
+      pickSet = new Set();
       for (const s of answer.split(',')) {
         const n = parseInt(s.trim(), 10);
-        if (n >= 1 && n <= GROUPS.length) skipSet.add(n - 1);
+        if (n >= 1 && n <= GROUPS.length) pickSet.add(n - 1);
       }
     }
   }
 
-  const selected = GROUPS.filter((_, i) => !skipSet.has(i));
-  const skipped = GROUPS.filter((_, i) => skipSet.has(i));
+  const selected = pickSet ? GROUPS.filter((_, i) => pickSet.has(i)) : GROUPS;
+  const skipped = pickSet ? GROUPS.filter((_, i) => !pickSet.has(i)) : [];
 
   if (selected.length === 0) {
     console.log('未选择任何配置组，退出。');
@@ -338,7 +345,53 @@ async function main() {
   const skipNames = skipped.map((g) => g.name).join(', ');
   const skipMsg = skipNames ? `（跳过: ${skipNames}）` : '';
   console.log(`✔ 合并 ${selected.length} 组共 ${totalLines} 项配置${skipMsg}`);
-  console.log('\n✅ Done! 重启 Ghostty 即可生效\n');
+
+  // Detect theme conflict keys outside managed block
+  let hasConflicts = false;
+  if (needsThemes) {
+    const finalLines = fs.readFileSync(configPath, 'utf-8').split('\n');
+    const conflicts = [];
+    let inManaged = false;
+
+    for (let i = 0; i < finalLines.length; i++) {
+      const line = finalLines[i];
+      if (line.trim() === MARKER_START) { inManaged = true; continue; }
+      if (line.trim() === MARKER_END) { inManaged = false; continue; }
+      if (inManaged) continue;
+
+      const key = parseKey(line);
+      if (key && THEME_CONFLICT_KEYS.has(key)) {
+        conflicts.push({ lineNum: i + 1, text: line.trim() });
+      }
+    }
+
+    if (conflicts.length > 0) {
+      console.log('\n⚠  以下配置会覆盖主题配色：');
+      for (const c of conflicts) {
+        console.log(`     第 ${c.lineNum} 行: ${c.text}`);
+      }
+
+      const doFix = allFlag || (await ask('   是否自动注释掉这些行？(Y/n) '));
+      if (doFix === true || !doFix || doFix.toLowerCase() === 'y') {
+        const conflictLineNums = new Set(conflicts.map((c) => c.lineNum));
+        const patched = finalLines.map((line, i) =>
+          conflictLineNums.has(i + 1) ? `# ${line}` : line
+        );
+        fs.writeFileSync(configPath, patched.join('\n'), 'utf-8');
+        console.log('   ✔ 已注释掉冲突配置');
+      } else {
+        hasConflicts = true;
+        console.log(`   配置文件位置: ${configPath}`);
+        console.log('   请手动移除或注释掉（加 # 前缀），然后按 Cmd+Shift+, 重载配置。');
+      }
+    }
+  }
+
+  if (hasConflicts) {
+    console.log('');
+  } else {
+    console.log('\n✅ Done! 按 Cmd+Shift+, 重载 Ghostty 即可生效\n');
+  }
 }
 
 main().catch((err) => {
