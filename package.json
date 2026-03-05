@@ -1,0 +1,10 @@
+{
+  "name": "yozakura",
+  "version": "1.0.0",
+  "description": "Ghostty Yozakura/Sakura theme + visual config installer",
+  "bin": {
+    "yozakura": "./bin/install.js"
+  },
+  "files": ["bin/", "themes/", "visual.conf"],
+  "license": "MIT"
+}
