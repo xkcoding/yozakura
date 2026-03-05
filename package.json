@@ -6,5 +6,11 @@
     "yozakura": "./bin/install.js"
   },
   "files": ["bin/", "themes/", "visual.conf"],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/imdafne/yozakura.git"
+  },
+  "keywords": ["ghostty", "theme", "terminal", "catppuccin"],
+  "author": "stellalou",
   "license": "MIT"
 }

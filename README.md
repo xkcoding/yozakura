@@ -5,7 +5,7 @@ Ghostty 视觉配置一键安装工具，包含 Yozakura (dark) + Sakura (light)
 ## 安装
 
 ```bash
-npx git+https://code.devops.xiaohongshu.com/stellalou/yozakura.git
+npx yozakura
 ```
 
 交互选择要安装的配置组，直接回车全部安装。
@@ -13,7 +13,7 @@ npx git+https://code.devops.xiaohongshu.com/stellalou/yozakura.git
 跳过交互，全部安装：
 
 ```bash
-npx git+https://code.devops.xiaohongshu.com/stellalou/yozakura.git --all
+npx yozakura --all
 ```
 
 ## 配置组
@@ -38,4 +38,3 @@ npx git+https://code.devops.xiaohongshu.com/stellalou/yozakura.git --all
 
 - macOS + [Ghostty](https://ghostty.org/) 已安装
 - Node.js >= 16
-- 公司 GitLab 访问权限
