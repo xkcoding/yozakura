@@ -5,7 +5,7 @@ Ghostty 视觉配置一键安装工具，包含 Yozakura (dark) + Sakura (light)
 ## 安装
 
 ```bash
-npx github:imdafne/yozakura
+npx yozakura
 ```
 
 交互选择要安装的配置组，直接回车全部安装。
@@ -13,7 +13,7 @@ npx github:imdafne/yozakura
 跳过交互，全部安装：
 
 ```bash
-npx github:imdafne/yozakura --all
+npx yozakura --all
 ```
 
 ## 配置组
