@@ -1,6 +1,6 @@
 # Yozakura
 
-Ghostty 视觉配置 + Claude Code 一键安装工具，包含主题、窗口、排版等 Ghostty 视觉配置及 Claude Code statusline。
+Ghostty 视觉配置 + Claude Code Statusline 一键安装工具。
 
 ## 安装
 
@@ -24,6 +24,25 @@ npx yozakura --all
 | 2 | 窗口 | 毛玻璃 + 内边距 + tabs 标题栏 |
 | 3 | 排版 | 字号、加粗、行高、CJK 字体、光标 |
 | 4 | Claude Code | Tab 重命名快捷键 + Statusline |
+
+## Statusline
+
+选择第 4 组后可自选 statusline 显示字段，双行输出：
+
+```
+Opus 4.6 │ ████░░░░░░ 38% (76k/200k) │ cache:82% │ ⎇ main*
+⏱ 10m │ $0.57 │ ~/code/my-project
+```
+
+| # | 字段 | 说明 |
+|---|------|------|
+| 1 | Model | 自动美化模型名 (claude-opus-4-6-xxx → Opus 4.6) |
+| 2 | 进度条 | 10 格进度条 + 百分比 + token 数，绿(<40%)/黄(40-60%)/红(>60%) |
+| 3 | 缓存命中率 | cache_read / total，反映上下文复用效率 |
+| 4 | Git 分支 | 分支名 + `*` 脏标记 |
+| 5 | 会话时长 | 从 JSON 获取，fallback 为本地时间戳追踪 |
+| 6 | 累计费用 | 会话累计费用 (USD) |
+| 7 | 工作目录 | 当前路径，$HOME 自动缩写为 ~ |
 
 ## 工作原理
 
