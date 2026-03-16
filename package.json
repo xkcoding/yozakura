@@ -1,5 +1,5 @@
 {
-  "name": "yozakura",
+  "name": "@xkcoding/yozakura",
   "version": "1.2.0",
   "description": "Ghostty Yozakura/Sakura theme + visual config installer",
   "bin": {
